@@ -6,7 +6,7 @@ import javax.validation.constraints.Size
 /*
 Created by Dhionatã on 2/9/2022
 */
-class ParkingSpotDto(
+open class ParkingSpotDto(
     @NotBlank internal val block: String,
 
     @NotBlank internal val parkingSpotNumber: String,

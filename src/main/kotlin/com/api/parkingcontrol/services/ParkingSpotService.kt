@@ -2,7 +2,10 @@ package com.api.parkingcontrol.services
 
 import com.api.parkingcontrol.models.ParkingSpotModel
 import com.api.parkingcontrol.repositories.ParkingSpotRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.util.*
 import javax.transaction.Transactional
 
 /*
@@ -29,8 +32,22 @@ class ParkingSpotService(val parkingSpotRepository: ParkingSpotRepository) {
         return parkingSpotRepository.existsByApartmentAndBlock(apartment, block)
     }
 
-    fun findAll(): List<ParkingSpotModel> {
-        return parkingSpotRepository.findAll()
+    fun findAll(pageable: Pageable): Page<ParkingSpotModel> {
+        return parkingSpotRepository.findAll(pageable)
+    }
+
+    fun findById(i: UUID): Optional<ParkingSpotModel> {
+        return parkingSpotRepository.findById(i)
+    }
+
+    @Transactional
+    fun deleteById(id: UUID) {
+        return parkingSpotRepository.deleteById(id)
+    }
+
+    @Transactional
+    fun put(parkingSpotModel: ParkingSpotModel): ParkingSpotModel {
+        return parkingSpotRepository.save(parkingSpotModel)
     }
 
 }
