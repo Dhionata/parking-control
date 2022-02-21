@@ -3,6 +3,7 @@ package com.api.parkingcontrol.controllers
 import com.api.parkingcontrol.dtos.ParkingSpotDto
 import com.api.parkingcontrol.models.ParkingSpotModel
 import com.api.parkingcontrol.services.ParkingSpotService
+import org.springframework.beans.BeanUtils
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -10,8 +11,6 @@ import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDateTime
-import java.time.ZoneId
 import java.util.UUID
 import javax.validation.Valid
 
@@ -38,9 +37,8 @@ class ParkingSpotController(val parkingSpotService: ParkingSpotService) {
         }
 
         val parkingSpotModel = ParkingSpotModel()
-        parkingSpotModel.copyProperties(parkingSpotDto)
-        parkingSpotModel.registrationDate = LocalDateTime.now(ZoneId.of("UTC"))
-        parkingSpotModel.show()
+        BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel)
+        println(parkingSpotModel.toString())
         return ResponseEntity.status(HttpStatus.CREATED).body(parkingSpotService.save(parkingSpotModel))
     }
 
@@ -53,7 +51,7 @@ class ParkingSpotController(val parkingSpotService: ParkingSpotService) {
         val a = ResponseEntity.status(HttpStatus.OK).body(
             parkingSpotService.findAll(pageable)
         )
-        a.body?.stream()?.forEach { it.show() }
+        a.body?.stream()?.forEach { println(it.toString()) }
         return a
     }
 
@@ -80,19 +78,20 @@ class ParkingSpotController(val parkingSpotService: ParkingSpotService) {
     fun putOne(
         @PathVariable(value = "id") id: UUID, @RequestBody @Valid parkingSpotDto: ParkingSpotDto
     ): ResponseEntity<Any?> {
-        try {
+        return try {
             val parkingSpotModelOptional = ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findById(id))
             if (!parkingSpotModelOptional.hasBody()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found.")
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found.")
+            } else {
+                val parkingSpotModel = parkingSpotModelOptional.body!!.get()
+                BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel)
+                println(parkingSpotModel.toString())
+                parkingSpotService.put(parkingSpotModel)
+                ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.save(parkingSpotModel))
             }
-            val parkingSpotModel = parkingSpotModelOptional.body!!.get()
-            parkingSpotModel.copyProperties(parkingSpotDto)
-            parkingSpotModel.show()
-            parkingSpotService.put(parkingSpotModel)
-            return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.save(parkingSpotModel))
         } catch (e: Exception) {
             println(e.message)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.message)
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.message)
         }
     }
 }
