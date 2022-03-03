@@ -4,6 +4,7 @@ import com.api.parkingcontrol.dtos.ParkingSpotDto
 import com.api.parkingcontrol.models.ParkingSpotModel
 import com.api.parkingcontrol.services.ParkingSpotService
 import org.springframework.beans.BeanUtils
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -20,7 +21,7 @@ Created by Dhionatã on 2/9/2022
 @RestController
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RequestMapping("/parking-spot")
-class ParkingSpotController(val parkingSpotService: ParkingSpotService) {
+class ParkingSpotController(@Autowired private val parkingSpotService: ParkingSpotService) {
 
     @PostMapping
     fun saveParkingSpot(@RequestBody @Valid parkingSpotDto: ParkingSpotDto): ResponseEntity<Any> {
@@ -31,9 +32,7 @@ class ParkingSpotController(val parkingSpotService: ParkingSpotService) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Spot Number is already in use!")
         }
         if (parkingSpotService.existByApartmentAndBlock(parkingSpotDto.apartment, parkingSpotDto.block)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                "Conflict: Parking Spot already registered for " + "this apartment/block!"
-            )
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot already registered for this apartment/block!")
         }
 
         val parkingSpotModel = ParkingSpotModel()
@@ -48,15 +47,14 @@ class ParkingSpotController(val parkingSpotService: ParkingSpotService) {
             page = 0, size = 10, sort = ["id"], direction = Sort.Direction.ASC
         ) pageable: Pageable
     ): ResponseEntity<Page<ParkingSpotModel>> {
-        val a = ResponseEntity.status(HttpStatus.OK).body(
+        //a.body?.stream()?.forEach { println(it.toString()) }
+        return ResponseEntity.status(HttpStatus.OK).body(
             parkingSpotService.findAll(pageable)
         )
-        a.body?.stream()?.forEach { println(it.toString()) }
-        return a
     }
 
     @GetMapping("/{id}")
-    fun getOne(@PathVariable(value = "id") id: UUID): ResponseEntity<Any?> {
+    fun getById(@PathVariable(value = "id") id: UUID): ResponseEntity<Any?> {
         val parkingSpotModelptional = ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findById(id))
         if (!parkingSpotModelptional.hasBody()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found.")
@@ -86,7 +84,7 @@ class ParkingSpotController(val parkingSpotService: ParkingSpotService) {
                 val parkingSpotModel = parkingSpotModelOptional.body!!.get()
                 BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel)
                 println(parkingSpotModel.toString())
-                parkingSpotService.put(parkingSpotModel)
+                parkingSpotService.save(parkingSpotModel)
                 ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.save(parkingSpotModel))
             }
         } catch (e: Exception) {

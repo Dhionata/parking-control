@@ -2,6 +2,7 @@ package com.api.parkingcontrol.services
 
 import com.api.parkingcontrol.models.ParkingSpotModel
 import com.api.parkingcontrol.repositories.ParkingSpotRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -13,8 +14,7 @@ Created by Dhionatã on 2/9/2022
 */
 
 @Service
-class ParkingSpotService(val parkingSpotRepository: ParkingSpotRepository) {
-
+class ParkingSpotService(@Autowired private val parkingSpotRepository: ParkingSpotRepository) {
     @Transactional
     fun save(parkingSpotModel: ParkingSpotModel): ParkingSpotModel {
         return parkingSpotRepository.save(parkingSpotModel)
@@ -44,10 +44,4 @@ class ParkingSpotService(val parkingSpotRepository: ParkingSpotRepository) {
     fun deleteById(id: UUID) {
         return parkingSpotRepository.deleteById(id)
     }
-
-    @Transactional
-    fun put(parkingSpotModel: ParkingSpotModel): ParkingSpotModel {
-        return parkingSpotRepository.save(parkingSpotModel)
-    }
-
 }

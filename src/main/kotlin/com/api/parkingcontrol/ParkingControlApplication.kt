@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class ParkingControlApplication {
     @GetMapping("/")
-    fun index(): String {
-        return "Olá mundo!"
-    }
+    fun index(): String = "Olá mundo!"
 }
 
-fun main(args: Array<String>) {
-    runApplication<ParkingControlApplication>(*args)
+fun main() {
+    runApplication<ParkingControlApplication>()
 }
