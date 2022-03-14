@@ -15,6 +15,7 @@ Created by Dhionatã on 2/9/2022
 
 @Service
 class ParkingSpotService(@Autowired private val parkingSpotRepository: ParkingSpotRepository) {
+
     @Transactional
     fun save(parkingSpotModel: ParkingSpotModel): ParkingSpotModel {
         return parkingSpotRepository.save(parkingSpotModel)
@@ -36,8 +37,8 @@ class ParkingSpotService(@Autowired private val parkingSpotRepository: ParkingSp
         return parkingSpotRepository.findAll(pageable)
     }
 
-    fun findById(i: UUID): Optional<ParkingSpotModel> {
-        return parkingSpotRepository.findById(i)
+    fun findById(id: UUID): Optional<ParkingSpotModel> {
+        return parkingSpotRepository.findById(id)
     }
 
     @Transactional

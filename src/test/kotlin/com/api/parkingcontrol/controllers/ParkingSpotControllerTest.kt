@@ -3,9 +3,8 @@ package com.api.parkingcontrol.controllers
 import com.api.parkingcontrol.dtos.ParkingSpotDto
 import com.api.parkingcontrol.models.ParkingSpotModel
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.Pageable
@@ -17,8 +16,7 @@ Created by Dhionatã on 2/21/2022
 
 @SpringBootTest
 @Transactional
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ParkingSpotControllerTest(@Autowired val parkingSpotController: ParkingSpotController) {
+internal class ParkingSpotControllerTest(@Autowired private val parkingSpotController: ParkingSpotController) {
 
     private val parkingSpotDto = ParkingSpotDto(
         parkingSpotNumber = "1",
@@ -31,7 +29,8 @@ class ParkingSpotControllerTest(@Autowired val parkingSpotController: ParkingSpo
         licensePlateCar = "ABC1234",
     )
 
-    @BeforeAll
+    @BeforeEach
+    @Test
     fun saveParkingSpot() {
         parkingSpotController.saveParkingSpot(parkingSpotDto)
     }
