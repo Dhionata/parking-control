@@ -2,12 +2,12 @@ package com.api.parkingcontrol.services
 
 import com.api.parkingcontrol.models.ParkingSpotModel
 import com.api.parkingcontrol.repositories.ParkingSpotRepository
+import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.*
-import javax.transaction.Transactional
 
 /*
 Created by Dhionatã on 2/9/2022

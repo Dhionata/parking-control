@@ -19,7 +19,14 @@ Created by Dhionatã on 2/25/2022
 internal class ParkingSpotServiceTest(@Autowired private val parkingSpotService: ParkingSpotService) {
 
     private val parkingSpotModel = ParkingSpotModel(
-        parkingSpotNumber = "1", licensePlateCar = "ABC1234", brandCar = "Fiat", modelCar = "Uno", colorCar = "Black", responsibleName = "Dhionatã", apartment = "A", block = "B"
+        parkingSpotNumber = "1",
+        licensePlateCar = "ABC1234",
+        brandCar = "Fiat",
+        modelCar = "Uno",
+        colorCar = "Black",
+        responsibleName = "Dhionatã",
+        apartment = "A",
+        block = "B"
     )
 
     @BeforeEach

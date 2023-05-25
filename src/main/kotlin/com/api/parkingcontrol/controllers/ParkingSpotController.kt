@@ -3,6 +3,7 @@ package com.api.parkingcontrol.controllers
 import com.api.parkingcontrol.dtos.ParkingSpotDto
 import com.api.parkingcontrol.models.ParkingSpotModel
 import com.api.parkingcontrol.services.ParkingSpotService
+import jakarta.validation.Valid
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -13,7 +14,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.UUID
-import javax.validation.Valid
 
 /*
 Created by Dhionatã on 2/9/2022
@@ -32,22 +32,22 @@ class ParkingSpotController(@Autowired private val parkingSpotService: ParkingSp
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Spot Number is already in use!")
         }
         if (parkingSpotService.existByApartmentAndBlock(parkingSpotDto.apartment, parkingSpotDto.block)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot already registered for this apartment/block!")
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body("Conflict: Parking Spot already registered for this apartment/block!")
         }
 
         val parkingSpotModel = ParkingSpotModel()
         BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel)
-        println(parkingSpotModel.toString())
-        return ResponseEntity.status(HttpStatus.CREATED).body(parkingSpotService.save(parkingSpotModel))
+        println("Enviado:\n${parkingSpotModel.toString()}")
+        val savedParkingSpot = parkingSpotService.save(parkingSpotModel)
+        println("Salvo:\n${savedParkingSpot.toString()}")
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedParkingSpot)
     }
 
     @GetMapping
     fun getAllParkingSpots(
-        @PageableDefault(
-            page = 0, size = 10, sort = ["id"], direction = Sort.Direction.ASC
-        ) pageable: Pageable
+        @PageableDefault(page = 0, size = 10, sort = ["id"], direction = Sort.Direction.ASC) pageable: Pageable
     ): ResponseEntity<Page<ParkingSpotModel>> {
-        //a.body?.stream()?.forEach { println(it.toString()) }
         return ResponseEntity.status(HttpStatus.OK).body(
             parkingSpotService.findAll(pageable)
         )
@@ -55,17 +55,17 @@ class ParkingSpotController(@Autowired private val parkingSpotService: ParkingSp
 
     @GetMapping("/{id}")
     fun getById(@PathVariable(value = "id") id: UUID): ResponseEntity<Any?> {
-        val parkingSpotModelptional = ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findById(id))
-        if (!parkingSpotModelptional.hasBody()) {
+        val parkingSpotModelOptional = ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findById(id))
+        if (!parkingSpotModelOptional.hasBody()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found.")
         }
-        return ResponseEntity.status(HttpStatus.OK).body(parkingSpotModelptional.body!!.get())
+        return ResponseEntity.status(HttpStatus.OK).body(parkingSpotModelOptional.body!!.get())
     }
 
     @DeleteMapping("/{id}")
-    fun deletOne(@PathVariable(value = "id") id: UUID): ResponseEntity<Any?> {
-        val parkingSpotModelptional = ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findById(id))
-        if (!parkingSpotModelptional.hasBody()) {
+    fun deleteOne(@PathVariable(value = "id") id: UUID): ResponseEntity<Any?> {
+        val parkingSpotModelOptional = ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findById(id))
+        if (!parkingSpotModelOptional.hasBody()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found.")
         }
         parkingSpotService.deleteById(id)

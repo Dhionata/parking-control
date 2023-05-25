@@ -40,25 +40,25 @@ internal class ParkingSpotControllerTest(@Autowired private val parkingSpotContr
         repeat(5) {
             parkingSpotController.saveParkingSpot(
                 ParkingSpotDto(
-                    parkingSpotNumber = "1$it",
-                    apartment = "1$it",
-                    block = "1$it",
-                    brandCar = "1$it",
-                    colorCar = "1$it",
-                    modelCar = "1$it",
-                    licensePlateCar = "1$it",
+                    parkingSpotNumber = "$it",
+                    apartment = "$it",
+                    block = "$it",
+                    brandCar = "$it",
+                    colorCar = "$it",
+                    modelCar = "$it",
+                    licensePlateCar = "$it",
                     responsibleName = "Dhionatã"
                 )
             )
         }
-        parkingSpotController.getAllParkingSpots(pageable = Pageable.unpaged()).body?.content?.stream()?.forEach { println(it) }
+        parkingSpotController.getAllParkingSpots(pageable = Pageable.unpaged()).body?.content?.stream()
+            ?.forEach { println(it) }
     }
 
     @Test
     fun getById() {
-        val id =
-            parkingSpotController.getAllParkingSpots(pageable = Pageable.unpaged()).body?.stream()?.filter { it.parkingSpotNumber == parkingSpotDto.parkingSpotNumber }?.findFirst()
-                ?.get()?.id
+        val id = parkingSpotController.getAllParkingSpots(pageable = Pageable.unpaged()).body?.stream()
+            ?.filter { it.parkingSpotNumber == parkingSpotDto.parkingSpotNumber }?.findFirst()?.get()?.id
         if (id != null) {
             val a = parkingSpotController.getById(id).body
             if (a is ParkingSpotModel) {
@@ -68,12 +68,11 @@ internal class ParkingSpotControllerTest(@Autowired private val parkingSpotContr
     }
 
     @Test
-    fun deletOne() {
-        val id =
-            parkingSpotController.getAllParkingSpots(pageable = Pageable.unpaged()).body?.stream()?.filter { it.parkingSpotNumber == parkingSpotDto.parkingSpotNumber }?.findFirst()
-                ?.get()?.id
+    fun deleteOne() {
+        val id = parkingSpotController.getAllParkingSpots(pageable = Pageable.unpaged()).body?.stream()
+            ?.filter { it.parkingSpotNumber == parkingSpotDto.parkingSpotNumber }?.findFirst()?.get()?.id
         if (id != null) {
-            parkingSpotController.deletOne(id)
+            parkingSpotController.deleteOne(id)
         }
     }
 
@@ -89,9 +88,8 @@ internal class ParkingSpotControllerTest(@Autowired private val parkingSpotContr
             licensePlateCar = "2",
             responsibleName = "Dhionatã"
         )
-        val id =
-            parkingSpotController.getAllParkingSpots(pageable = Pageable.unpaged()).body?.stream()?.filter { it.parkingSpotNumber == parkingSpotDto.parkingSpotNumber }?.findFirst()
-                ?.get()?.id
+        val id = parkingSpotController.getAllParkingSpots(pageable = Pageable.unpaged()).body?.stream()
+            ?.filter { it.parkingSpotNumber == parkingSpotDto.parkingSpotNumber }?.findFirst()?.get()?.id
         if (id != null) {
             println(parkingSpotController.putOne(id, b).toString())
         }
